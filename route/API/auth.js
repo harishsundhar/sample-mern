@@ -36,6 +36,7 @@ const { check, validationResult } = require('express-validator');
                 const userml = await User.findOne({ email });
                 console.log(email);
                 console.log(userml);
+                
                 // user exists
                 if (userml) {
                     return res.status(400).json({ errors: [{ msg: 'Email invalid' }] });
