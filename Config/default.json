@@ -1,0 +1,5 @@
+{
+    "mongoURI": "mongodb+srv://harish:harish123@dev-mernconnect.6t80e.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtToken": "SecretTokensJSON"
+    
+}
