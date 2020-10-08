@@ -22,7 +22,7 @@ const { check, validationResult } = require('express-validator');
     route.post('/',
         [
             check('email', 'email is invalid').isEmail(),
-            check('password', 'Password is required').isLength({ min: 6 })
+            check('password', 'Password is required').exists()
         ],
         async (req, res) => {
             const errors = validationResult(req);
@@ -34,22 +34,21 @@ const { check, validationResult } = require('express-validator');
             const {  email, password } = req.body;
             try {
                 const userml = await User.findOne({ email });
-                console.log(email);
-                console.log(userml);
+                
                 // user exists
-                if (userml) {
-                    return res.status(400).json({ errors: [{ msg: 'Email invalid' }] });
+                if (!userml) {
+                    return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
                 }
                 
-                const psMatch = await bcrypt.compare(password, user.password);
-
+                const psMatch = await bcrypt.compare(password, userml.password);
+                
                 if(!psMatch){
                     return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
                 }
                 //return jwtokens
                 const payload = { 
                     user: {
-                        id: user.id
+                        id: userml.id
                     } 
                 }
                 jwt.sign(
