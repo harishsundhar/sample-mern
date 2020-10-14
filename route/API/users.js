@@ -19,7 +19,7 @@ route.post('/',
         if (!errors.isEmpty()) {
             return res.status(400).json({ error: errors.array() });
         }
-
+        
         //user register
         const { name, email, password } = req.body;
         try {

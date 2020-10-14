@@ -1,58 +1,67 @@
 
 import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { login } from '../../actions/auth';
 
-const Login = () => {
 
-    const[formData, setFormData ] = useState({
+
+
+const Login = ({ login, isAuthenticated }) => {
+
+    const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
 
     const { email, password } = formData;
 
-    const onChange = e => setFormData({ ...formData, [e.target.name]:e.target.value });
+    const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async e => {
         e.preventDefault();
-            // const newUser = {
-            //     name,
-            //     email,
-            //     password,
-            // }
+        // const newUser = {
+        //     name,
+        //     email,
+        //     password,
+        // }
 
-            // try {
-            //     const config = {
-            //         headers: {
-            //             "Content-Type":"application/json"
-            //         }
-            //     }
+        // try {
+        //     const config = {
+        //         headers: {
+        //             "Content-Type":"application/json"
+        //         }
+        //     }
 
-            //     const body = JSON.stringify(newUser);
+        //     const body = JSON.stringify(newUser);
 
-            //     const res = await axios.post('/api/users', body, config);
-            //     console.log(res.data);
+        //     const res = await axios.post('/api/users', body, config);
+        //     console.log(res.data);
 
-            // } catch (err) {
-            //     console.log(err.response.data);
-            // }
-            console.log('SUCCESS')
+        // } catch (err) {
+        //     console.log(err.response.data);
+        // }
+        login(email, password);
     };
-
+    //redirect loggged in 
+    if (isAuthenticated) {
+        return <Redirect to="/dashboard" />;
+    }
 
     return (
         <Fragment>
-            <h1 className="large text-primary">Sign Up</h1>
+            <h1 className="large text-primary">Sign In</h1>
             <p className="lead"><i className="fas fa-user"></i> Sign Into Your Account</p>
             <form className="form" onSubmit={e => onSubmit(e)}>
                 <div className="form-group">
-                    <input 
-                        type="email" 
-                        placeholder="Email Address" 
+                    <input
+                        type="email"
+                        placeholder="Email Address"
                         name="email"
                         value={email}
                         onChange={e => onChange(e)}
-                        required />
+                       required />
                 </div>
                 <div className="form-group">
                     <input
@@ -64,7 +73,7 @@ const Login = () => {
                         minLength="6"
                     />
                 </div>
-                <input type="submit" className="btn btn-primary" value="Register" />
+                <input type="submit" className="btn btn-primary" value="Login" />
             </form>
             <p className="my-1">
                 Don't have an account? <Link to="/register">Sign Up</Link>
@@ -74,7 +83,17 @@ const Login = () => {
 }
 
 
-export default Login
+Login.propTypes = {
+    login: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool
+}
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated
+});
+
+
+export default connect(mapStateToProps, { login })(Login);
 
 
 

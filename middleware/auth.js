@@ -5,12 +5,13 @@ const config = require('config');
 
 module.exports = async (req, res, next) =>{
     // get token headers
-    const token = req.header('x-auth-header');
+    const token = req.header('x-auth-token');
     //token not valid
+    if(!token){
+        return res.status(401).json({ msg : 'token access denied'});
+    }
+
     try{
-        if(!token){
-            res.status(401).json({ msg : 'token access denied'});
-        }
         //token verify
         const decoded = jwt.verify(token, config.get('jwtToken'));
 

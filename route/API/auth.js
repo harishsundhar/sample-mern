@@ -29,7 +29,7 @@ const { check, validationResult } = require('express-validator');
             if (!errors.isEmpty()) {
                 return res.status(400).json({ error: errors.array() });
             }
-
+            
             //user mail account valid
             const {  email, password } = req.body;
             try {
