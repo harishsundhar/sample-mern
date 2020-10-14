@@ -294,17 +294,18 @@ route.get('/github/:username', (req, res) => {
             client_secret=${config.get('githubSecret')}`,
             method: 'GET',
             headers: { 'user-agent' : 'node.js'}
-        };
-        console.log(options);
+        }
+        
         request(options, (error, response, body) => {
             if(error) console.error(error);
-
+            
             if(response.statusCode !== 200){
-                return res.status(400).json({ msg : 'No github profile found'});
+                return res.status(404).json({ msg:"Profile not found"});
             }
-
+            
             res.json(JSON.parse(body));
         });
+        
     } catch (err) {
         console.log(err.message);
         res.status(500).send('Server Error');
