@@ -37,13 +37,13 @@ const { check, validationResult } = require('express-validator');
                 
                 // user exists
                 if (!userml) {
-                    return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
+                    return res.status(400).json({ error: [{ msg: 'Invalid Credentials' }] });
                 }
                 
                 const psMatch = await bcrypt.compare(password, userml.password);
                 
                 if(!psMatch){
-                    return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
+                    return res.status(400).json({ error: [{ msg: 'Invalid Credentials' }] });
                 }
                 //return jwtokens
                 const payload = { 

@@ -39,7 +39,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             //     const body = JSON.stringify(newUser);
 
             //     const res = await axios.post('/api/users', body, config);
-            //     console.log(res.data);
+           
 
             // } catch (err) {
             //     console.log(err.response.data);
@@ -101,7 +101,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                 <input type="submit" className="btn btn-primary" value="Register" />
             </form>
             <p className="my-1">
-                Already have an account? <Link to="login.html">Sign In</Link>
+                Already have an account? <Link to="/login">Sign In</Link>
             </p>
         </Fragment>
     )

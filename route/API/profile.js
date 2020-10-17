@@ -6,13 +6,14 @@ const auth = require('../../middleware/auth');
 const route = express.Router();
 const Profile = require('../../model/Profile');
 const User = require('../../model/User');
+const Post = require('../../model/Posts');
 const { check, validationResult } = require('express-validator');
 
 // get api/profile/me
 route.get('/me',auth, async (req,res)=>{
     try {
         const profile = await Profile.findOne({ user: req.user.id}).populate('user', ['name', 'avatar']);
-        console.log(profile);
+        
         if(!profile){
             return res.status(400).json({ msg: "there is no profile for this user"});
         }
@@ -81,7 +82,7 @@ route.post('/',auth,
 
     try {
         let profile = await Profile.findOne({ user: req.user.id });
-        console.log(profile);
+        
         if(profile){
             profile = await Profile.findOneAndUpdate(
                 { user: req.user.id },
@@ -107,7 +108,7 @@ route.post('/',auth,
 route.get('/', async(req, res) => {
     try {
         const profiles = await Profile.find().populate('user', ['user, avatar']);
-        console.log(profiles);
+        
         res.json(profiles);
     } catch (err) {
         console.log(err.message);
@@ -119,7 +120,7 @@ route.get('/', async(req, res) => {
 route.get('/user/:user_id', async(req, res) => {
     try {
         const profile = await Profile.find({ user: req.params.user_id }).populate('user', ['user, avatar']);
-        console.log(profile);
+        
         if(!profile){
             return res.status(400).json({ msg : "Profile Not found"});
         }
@@ -136,6 +137,8 @@ route.get('/user/:user_id', async(req, res) => {
 // Delete user and profile
 route.delete('/',auth, async(req, res) => {
     try {
+        //delete user posts 
+        await Post.deleteMany({ user: req.user.id});
         //delete profile
         await Profile.findOneAndDelete({ user: req.user.id }).populate('user', ['user, avatar']);
         //delete user
@@ -185,7 +188,7 @@ route.put('/experience',
 
         try {
             const profile = await Profile.findOne({ user: req.user.id });
-            console.log(profile);
+            
             profile.experience.unshift(newExp);
 
             await profile.save();
@@ -228,7 +231,7 @@ route.put('/education',
         const errors = validationResult(req);
 
         if(!errors.isEmpty()){
-            return res.status(400).json({ errors : errors.array() });
+            return res.status(400).json({ error : errors.array() });
         }
 
         const education = {
@@ -253,7 +256,7 @@ route.put('/education',
 
         try {
             const profile = await Profile.findOne({ user: req.user.id });
-            console.log(profile);
+           
             profile.education.unshift(newedu);
 
             await profile.save();
