@@ -43,7 +43,7 @@ CommentItem.propTypes = {
     auth: PropTypes.object.isRequired,
     deleteComment: PropTypes.func.isRequired
 }
-}
+
 
 const mapStateToProps = {
     auth: state.auth
