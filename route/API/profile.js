@@ -107,7 +107,7 @@ route.post('/',auth,
 // get all users
 route.get('/', async(req, res) => {
     try {
-        const profiles = await Profile.find().populate('user', ['user, avatar']);
+        const profiles = await Profile.find().populate('user', ['name', 'avatar']);
         
         res.json(profiles);
     } catch (err) {
@@ -119,7 +119,7 @@ route.get('/', async(req, res) => {
 // get all user/:user_id
 route.get('/user/:user_id', async(req, res) => {
     try {
-        const profile = await Profile.find({ user: req.params.user_id }).populate('user', ['user, avatar']);
+        const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
         
         if(!profile){
             return res.status(400).json({ msg : "Profile Not found"});
@@ -127,7 +127,7 @@ route.get('/user/:user_id', async(req, res) => {
         res.json(profile);
     } catch (err) {
         console.log(err.message);
-        if(err.kind == 'Objectid'){
+        if(err.kind == 'ObjectId'){
             return res.status(400).json({ msg : "Profile Not found"});
         }
         res.status(500).send('Server Error');
@@ -140,9 +140,9 @@ route.delete('/',auth, async(req, res) => {
         //delete user posts 
         await Post.deleteMany({ user: req.user.id});
         //delete profile
-        await Profile.findOneAndDelete({ user: req.user.id }).populate('user', ['user, avatar']);
+        await Profile.findOneAndDelete({ user: req.user.id });
         //delete user
-        await User.findOneAndDelete({ _id: req.user.id }).populate('user', ['user, avatar']);
+        await User.findOneAndDelete({ _id: req.user.id });
 
         res.json({ msg: 'User is Deleted' });
     } catch (err) {
@@ -290,23 +290,36 @@ route.delete('/education/:edu_id', auth, async(req, res) => {
 //GET github repos
 route.get('/github/:username', (req, res) => {
     try {
+        // const options = {
+        //     uri: `https://api.github.com/users/
+        //     ${req.params.username}/repos?per_page=5&sort=created:asc
+        //     &client_id=${config.get('githubClientid')}&
+        //     client_secret=${config.get('githubSecret')}`,
+        //     method: 'GET',
+        //     headers: { 'user-agent' : 'node.js'}
+        // }
         const options = {
-            uri: `https://api.github.com/users/
-            ${req.params.username}/repos?per_page=5&sort=created:asc
-            &client_id=${config.get('githubClientid')}&
-            client_secret=${config.get('githubSecret')}`,
+            uri: encodeURI(
+              `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`
+            ),
             method: 'GET',
-            headers: { 'user-agent' : 'node.js'}
-        }
+            headers: {
+              'user-agent': 'node.js',
+              Authorization: `token ${config.get('githubToken')}`
+            }
+          };
         
         request(options, (error, response, body) => {
-            if(error) console.error(error);
-            
-            if(response.statusCode !== 200){
-                return res.status(404).json({ msg:"Profile not found"});
+            if(error) {
+                console.error(error);
             }
-            
+
+            if(response.statusCode !== 200){
+                return res.status(404).json({ msg:"Github Profile not found"});
+            }
+
             res.json(JSON.parse(body));
+
         });
         
     } catch (err) {

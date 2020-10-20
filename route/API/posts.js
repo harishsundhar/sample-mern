@@ -16,9 +16,9 @@ route.post('/',
     ],
     async (req, res) => {
         const errors = validationResult(req);
-
+        
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({ error: errors.array() });
         }
         try {
             const user = await User.findById(req.user.id).select('-password');
@@ -30,10 +30,10 @@ route.post('/',
             });
 
             const post = await newPost.save();
-
+            console.log(post);
             res.json(post);
         } catch (err) {
-            console.log(err.message);
+            console.error(err.message);
             res.status(500).send('Server Error');
         }
 
@@ -45,7 +45,7 @@ route.get('/', auth, async (req, res) => {
         const posts = await Post.find().sort({ date: -1 });
         res.json(posts);
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -61,7 +61,7 @@ route.get('/:id', auth, async (req, res) => {
 
         res.json(post);
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         if (err.kind === 'ObjectId') {
             return res.status(404).json({ msg : "Post not found"});
         }
@@ -85,7 +85,7 @@ route.delete('/:id', auth, async (req, res) => {
         await post.remove();
         res.json({ msg: 'Post removed' });
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         if (err.kind === 'ObjectId' ) {
             return res.status(404).json({ msg : "Post not found"});
         }
@@ -109,7 +109,7 @@ route.put('/like/:id', auth, async (req,res) => {
 
         res.json(post.likes);
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -134,7 +134,7 @@ route.put('/unlike/:id', auth, async (req,res) => {
 
         res.json(post.likes);
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -169,7 +169,7 @@ route.post('/comment/:id',
 
             res.json(post.comments);
         } catch (err) {
-            console.log(err.message);
+            console.error(err.message);
             res.status(500).send('Server Error');
         }
 
@@ -204,7 +204,7 @@ route.delete('/comment/:id/:comment_id', auth, async (req, res) => {
          res.json(post.comments);
 
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
