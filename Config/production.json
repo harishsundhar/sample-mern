@@ -1,0 +1,7 @@
+{
+    "mongoURI": "mongodb+srv://harish:harish123@dev-mernconnect.6t80e.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtToken": "SecretTokensJSON",
+    "githubClientid":"1bb58688f1846980e73f",
+    "githubSecret":"578dfb677c9ffca9c4fce0548c8c0fc5393b80f7"
+    
+}

@@ -1,4 +1,3 @@
-const { json } = require('express');
 const express = require('express');
 const config = require('config');
 const request = require('request');
@@ -19,7 +18,7 @@ route.get('/me',auth, async (req,res)=>{
         }
         res.json(profile);
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server error');
     }
 });
@@ -38,7 +37,7 @@ route.post('/',auth,
         }
          
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 
@@ -98,7 +97,7 @@ route.post('/',auth,
         await profile.save();
         res.json(profile);
     } catch (err) {
-        console.log(err.messasge);
+        console.error(err.messasge);
         res.status(500).send('Server error');
     }
 });
@@ -111,7 +110,7 @@ route.get('/', async(req, res) => {
         
         res.json(profiles);
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -126,7 +125,7 @@ route.get('/user/:user_id', async(req, res) => {
         }
         res.json(profile);
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         if(err.kind == 'ObjectId'){
             return res.status(400).json({ msg : "Profile Not found"});
         }
@@ -146,7 +145,7 @@ route.delete('/',auth, async(req, res) => {
 
         res.json({ msg: 'User is Deleted' });
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -196,7 +195,7 @@ route.put('/experience',
             res.json(profile);
 
         } catch (err) {
-            console.log(err.message);
+            console.error(err.message);
             res.status(500).send('Server Error');
         }
 });
@@ -214,7 +213,7 @@ route.delete('/experience/:exp_id', auth, async(req, res) => {
         res.json(profile);
 
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -264,7 +263,7 @@ route.put('/education',
             res.json(profile);
 
         } catch (err) {
-            console.log(err.message);
+            console.error(err.message);
             res.status(500).send('Server Error');
         }
 });
@@ -282,7 +281,7 @@ route.delete('/education/:edu_id', auth, async(req, res) => {
         res.json(profile);
 
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -323,7 +322,7 @@ route.get('/github/:username', (req, res) => {
         });
         
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
