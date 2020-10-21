@@ -34,7 +34,7 @@ const { check, validationResult } = require('express-validator');
             const {  email, password } = req.body;
             try {
                 const userml = await User.findOne({ email });
-                
+              
                 // user exists
                 if (!userml) {
                     return res.status(400).json({ error: [{ msg: 'Invalid Credentials' }] });
