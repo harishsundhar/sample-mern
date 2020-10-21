@@ -13,7 +13,7 @@ const { check, validationResult } = require('express-validator');
             const user = await User.findById(req.user.id).select('-password');
             res.json(user)
         }catch(err){
-            console.log(err.message);
+            console.error(err.message);
             res.status(500).send('server error');       
         }
     });
@@ -22,34 +22,33 @@ const { check, validationResult } = require('express-validator');
     route.post('/',
         [
             check('email', 'email is invalid').isEmail(),
-            check('password', 'Password is required').isLength({ min: 6 })
+            check('password', 'Password is required').exists()
         ],
         async (req, res) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ error: errors.array() });
             }
-
+            
             //user mail account valid
             const {  email, password } = req.body;
             try {
                 const userml = await User.findOne({ email });
-                console.log(email);
-                console.log(userml);
+              
                 // user exists
-                if (userml) {
-                    return res.status(400).json({ errors: [{ msg: 'Email invalid' }] });
+                if (!userml) {
+                    return res.status(400).json({ error: [{ msg: 'Invalid Credentials' }] });
                 }
                 
-                const psMatch = await bcrypt.compare(password, user.password);
-
+                const psMatch = await bcrypt.compare(password, userml.password);
+                
                 if(!psMatch){
-                    return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
+                    return res.status(400).json({ error: [{ msg: 'Invalid Credentials' }] });
                 }
                 //return jwtokens
                 const payload = { 
                     user: {
-                        id: user.id
+                        id: userml.id
                     } 
                 }
                 jwt.sign(
